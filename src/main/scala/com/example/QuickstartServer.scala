@@ -1,10 +1,11 @@
 package com.example
 
 //#quick-start-server
-import akka.actor.ActorSystem
+import akka.actor.{ ActorRef, ActorSystem }
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
+import sucorrientazo.actors.Service
 import sucorrientazo.api.RestauranteRoutes
 
 import scala.concurrent.Await
@@ -13,15 +14,10 @@ import scala.concurrent.duration.Duration
 //#main-class
 object QuickstartServer extends App with RestauranteRoutes {
 
-  // set up ActorSystem and other dependencies here
-  //#main-class
-  //#server-bootstrapping
   implicit val actorSys: ActorSystem = ActorSystem("almuerzos")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
-  //#server-bootstrapping
+  val actorService: ActorRef = actorSys.actorOf(Service.props, "userRegistryActor")
 
-  //#main-class
-  // from the UserRoutes trait
   lazy val routes: Route = restauranteRoutes
   //#main-class
 

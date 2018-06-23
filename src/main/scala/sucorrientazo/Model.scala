@@ -8,8 +8,19 @@ final case object Sur extends Posicion
 final case object Este extends Posicion
 final case object Oeste extends Posicion
 final case class Coordenadas(x: Int, y: Int, posicion: Posicion) extends Model
-final case class Almuerzo(direccion: List[Movimiento]) extends Model
-final case class Almuerzos(almuerzos: List[Almuerzo]) extends Model
+
+final case class Almuerzo(direcciones: List[String]) extends Model
+final case class Almuerzos(almuerzos: List[Almuerzo], numero_drones: Int) extends Model
+
+/* A estos objetos se tiene que mapear las clases obtenidas del json,
+ para operar con ellos en los Dron Actors */
+final case class AlmuerzoMapper(movimientos: List[Movimiento]) extends Model
+final case class Direcciones(direcciones: List[AlmuerzoMapper])
+final case class AlmuerzosMapper(
+  almuerzos: List[Direcciones],
+  numero_drones: Int
+) extends Model
+
 final case class Reporte(resultados: List[String])
 final case class Fichero(nombre: String) extends Model
 final case object Avanzar extends Movimiento

@@ -1,8 +1,135 @@
+/*{
+  "almuerzos": [
+    {
+      "direcciones": [
+        "AAAAIAIAD",
+        "DAAIAI",
+        "DAIADAD",
+        "AAIADADD"
+      ]
+    },
+    {
+      "direcciones": [
+        "AAAIAIAD",
+        "DAAIAIA",
+        "DAIADADA",
+        "AAIAADADD"
+      ]
+    },
+    {
+      "direcciones": [
+        "AAIAIAIAD",
+        "DAIAIAIA",
+        "DAIADIADA",
+        "AAIAADADID"
+      ]
+    }
+  ],
+  "numero_drones":3
+}*/
+
 {
-  "direcciones": [
-    "AAAAIAIAD",
-    "DAAIAI",
-    "DAIADAD",
-    "AAIADADD"
-  ]
+  "almuerzos": [
+    {
+      "direcciones": [
+        {
+          "movimientos": [
+            "Avanzar",
+            "GirarIzquierda",
+            "Avanzar",
+            "Avanzar",
+            "GirarDerecha"
+          ]
+        },
+        {
+          "movimientos": [
+            "Avanzar",
+            "GirarDerecha",
+            "Avanzar",
+            "GirarIzquierda",
+            "Avanzar",
+            "GirarDerecha"
+          ]
+        },
+        {
+          "movimientos": [
+            "GirarDerecha",
+            "Avanzar",
+            "Avanzar",
+            "GirarIzquierda",
+            "Avanzar",
+            "GirarDerecha"
+          ]
+        }
+
+      ]
+    },
+    {
+      "direcciones": [
+        {
+          "movimientos": [
+            "Avanzar",
+            "GirarIzquierda",
+            "Avanzar",
+            "Avanzar",
+            "GirarDerecha"
+          ]
+        },
+        {
+          "movimientos": [
+            "Avanzar",
+            "GirarDerecha",
+            "Avanzar",
+            "GirarIzquierda",
+            "Avanzar",
+            "GirarDerecha"
+          ]
+        },
+        {
+          "movimientos": [
+            "GirarDerecha",
+            "Avanzar",
+            "Avanzar",
+            "GirarIzquierda",
+            "Avanzar",
+            "GirarDerecha"
+          ]
+        }
+      ]
+    },
+    {
+      "direcciones": [
+        {
+          "movimientos": [
+            "Avanzar",
+            "GirarIzquierda",
+            "Avanzar",
+            "Avanzar",
+            "GirarDerecha"
+          ]
+        },
+        {
+          "movimientos": [
+            "Avanzar",
+            "GirarDerecha",
+            "Avanzar",
+            "GirarIzquierda",
+            "Avanzar",
+            "GirarDerecha"
+          ]
+        },
+        {
+          "movimientos": [
+            "GirarDerecha",
+            "Avanzar",
+            "Avanzar",
+            "GirarIzquierda",
+            "Avanzar",
+            "GirarDerecha"
+          ]
+        }
+      ]
+    }
+  ],
+  "numero_drones":3
 }

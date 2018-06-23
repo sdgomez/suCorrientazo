@@ -11,16 +11,24 @@ class Dron extends Actor with ActorLogging {
   var coordenadasActuales: Coordenadas = Coordenadas(0, 0, Norte)
 
   override def receive: Receive = {
-    case Almuerzos(listaAlmuerzos) =>
-      entregarAlmuerzos(listaAlmuerzos)
+    /*
+    * Un dron recibe una lista de direcciones de almuerzos a entregar.
+    * debe haber un actor que maneje a todos los drones, que reciba
+    * una lista de drones o en nuestro caso un AlmuerzosMapper, lo recorra
+    * y vaya creando los actores que requiera y les vaya dando las direcciones.
+     */
+    case Direcciones(_) =>
+      entregarAlmuerzos(_)
   }
 
-  def entregarAlmuerzos(almuerzos: List[Almuerzo]): Reporte = {
-    val entrega: List[String] = almuerzos.map {
-      almuerzo =>
-        val coordenadas = entregarUnAlmuerzo(almuerzo.direccion)
-        incrementar()
-        s"(${coordenadas.x}, ${coordenadas.y}) ${coordenadas.posicion}"
+  def entregarAlmuerzos(direcciones: List[Direcciones]): Reporte = {
+    val entrega: List[String] = direcciones.flatMap {
+      _.direcciones.map {
+        almuerzo =>
+          val coordenadas = entregarUnAlmuerzo(almuerzo.movimientos)
+          incrementar()
+          s"(${coordenadas.x}, ${coordenadas.y}) ${coordenadas.posicion}"
+      }
     }
     // almacenar este reporte en base de datos
     Reporte(entrega)
