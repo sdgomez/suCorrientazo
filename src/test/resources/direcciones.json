@@ -1,33 +1,36 @@
-/*{
+{
   "almuerzos": [
+    {
+      "direcciones": [
+          "AAAAIAIAD",
+          "DAAIAI",
+          "DAIADAD",
+          "AAIADADD"
+        ],
+      "drones":1
+    },
     {
       "direcciones": [
         "AAAAIAIAD",
         "DAAIAI",
         "DAIADAD",
         "AAIADADD"
-      ]
+      ],
+      "drones":1
     },
     {
       "direcciones": [
-        "AAAIAIAD",
-        "DAAIAIA",
-        "DAIADADA",
-        "AAIAADADD"
-      ]
-    },
-    {
-      "direcciones": [
-        "AAIAIAIAD",
-        "DAIAIAIA",
-        "DAIADIADA",
-        "AAIAADADID"
-      ]
+        "AAAAIAIAD",
+        "DAAIAI",
+        "DAIADAD",
+        "AAIADADD"
+      ],
+      "drones":1
     }
   ],
   "numero_drones":3
-}*/
-
+}
+/*
 {
   "almuerzos": [
     {
@@ -133,3 +136,4 @@
   ],
   "numero_drones":3
 }
+*/

@@ -9,8 +9,8 @@ final case object Este extends Posicion
 final case object Oeste extends Posicion
 final case class Coordenadas(x: Int, y: Int, posicion: Posicion) extends Model
 
-final case class Almuerzo(direcciones: List[String]) extends Model
-final case class Almuerzos(almuerzos: List[Almuerzo], numero_drones: Int) extends Model
+final case class Almuerzo(direcciones: List[String], drones: Int)
+final case class Almuerzos(almuerzos: List[List[String]], numero_drones: Int)
 
 /* A estos objetos se tiene que mapear las clases obtenidas del json,
  para operar con ellos en los Dron Actors */
