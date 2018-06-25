@@ -1,17 +1,16 @@
 package sucorrientazo.api
 
-import akka.actor.{ ActorRef, ActorSystem }
+import akka.actor.{ActorRef, ActorSystem}
 import akka.event.Logging
-import akka.http.scaladsl.model.{ HttpEntity, HttpResponse }
-import akka.http.scaladsl.server.Directives.{ pathPrefix, _ }
+import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
+import akka.http.scaladsl.server.Directives.{pathPrefix, _}
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.get
-import akka.pattern.{ CircuitBreaker, ask }
+import akka.pattern.{CircuitBreaker, ask}
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Sink
-import akka.util.{ ByteString, Timeout }
-import play.api.libs.json.{ JsObject, JsValue, Json }
-import sucorrientazo.{ Almuerzos, AlmuerzosMapper }
+import akka.util.Timeout
+import play.api.libs.json.{JsObject, Json}
+import sucorrientazo.AlmuerzosMapper
 import sucorrientazo.actors.Service.ObtenerDirecciones
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -67,6 +66,8 @@ trait RestauranteRoutes extends RestauranteMarshaller {
 
           //json.as[Almuerzos]
           transformarJson(json)
+
+          // necesito un id para cada dron y con ese se crea el actor del mismo
       }
 
       fAlmuerzos.map(x => println(s"ha tenido exito $x.entity con el random /* random */"))
