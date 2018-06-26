@@ -17,6 +17,7 @@ object QuickstartServer extends App with RestauranteRoutes {
   implicit val actorSys: ActorSystem = ActorSystem("almuerzos")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   val actorService: ActorRef = actorSys.actorOf(Service.props, "userRegistryActor")
+  val entregaActor: ActorRef = actorSys.actorOf(Service.props, "entregaActor")
 
   lazy val routes: Route = restauranteRoutes
   //#main-class

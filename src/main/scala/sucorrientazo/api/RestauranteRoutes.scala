@@ -20,6 +20,7 @@ import scala.concurrent.duration._
 trait RestauranteRoutes extends RestauranteMarshaller {
   implicit val actorSys: ActorSystem
   def actorService: ActorRef
+  def entregaActor: ActorRef
   def materializer: ActorMaterializer
   lazy val log = Logging(actorSys, classOf[RestauranteRoutes])
   implicit lazy val timeout = Timeout(5.seconds)
@@ -62,22 +63,33 @@ trait RestauranteRoutes extends RestauranteMarshaller {
           val entity = httpResponse.entity.asInstanceOf[HttpEntity.Strict]
           val entidad = entity.data.utf8String
           val json: JsObject = Json.parse(entidad).as[JsObject]
-          println("este es mi json en string ====================> " + entity.data.utf8String)
+          /*println("este es mi json en string ====================> " +
+            entity.data.utf8String) */
 
           //json.as[Almuerzos]
           transformarJson(json)
 
-          // necesito un id para cada dron y con ese se crea el actor del mismo
+        // necesito un id para cada dron y con ese se crea el actor del mismo
       }
 
-      fAlmuerzos.map(x => println(s"ha tenido exito $x.entity con el random /* random */"))
-        .recover({
-          case t => "error: " + println(t.toString)
-        })
+      /* val z = fAlmuerzos.map { x =>
+        val y: Future[Reporte] = (entregaActor ? EntregarListado(x)).mapTo[Future[Reporte]].flatten
+        y.map {
+          m =>
+            println("resultado del futuro ===============>" + m)
+        }
+        /*println(s"ha tenido exito $x.entity con " +
+        s"el random /* random */") */
+      }.recover({
+        case t => "error: " + println(t.toString)
+      })*/
       //})
 
-      // Thread.sleep(2000000)
-      complete("ok")
+      onSuccess(fAlmuerzos) { extraction =>
+        complete("" + extraction)
+      }
+      /*Thread.sleep(90000)
+      complete("ok")*/
 
     }
   }

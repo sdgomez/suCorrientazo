@@ -3,12 +3,13 @@ package sucorrientazo.actors
 import akka.actor.{ Actor, ActorLogging, Props }
 import sucorrientazo._
 import sucorrientazo.configuration.Application._
-
+import java.io._
 class Dron extends Actor with ActorLogging {
 
   // TODO uso recursividad pata evitar crear var?
   var numeroAlmuerzosEntregados: Int = 0
   var coordenadasActuales: Coordenadas = Coordenadas(0, 0, Norte)
+  val pw = new PrintWriter(new File("hello.txt"))
 
   override def receive: Receive = {
     /*
@@ -17,19 +18,20 @@ class Dron extends Actor with ActorLogging {
     * una lista de drones o en nuestro caso un AlmuerzosMapper, lo recorra
     * y vaya creando los actores que requiera y les vaya dando las direcciones.
      */
-    case Direcciones(_) =>
-      entregarAlmuerzos(_)
+    case Direcciones(x) =>
+      println("mensaje recibido")
+      sender() ! entregarAlmuerzos(x)
   }
 
-  def entregarAlmuerzos(direcciones: List[Direcciones]): Reporte = {
-    val entrega: List[String] = direcciones.flatMap {
-      _.direcciones.map {
-        almuerzo =>
-          val coordenadas = entregarUnAlmuerzo(almuerzo.movimientos)
-          incrementar()
-          s"(${coordenadas.x}, ${coordenadas.y}) ${coordenadas.posicion}"
-      }
+  def entregarAlmuerzos(direcciones: List[AlmuerzoMapper]): Reporte = {
+    val entrega: List[String] = direcciones.map {
+      x =>
+        val coordenadas = entregarUnAlmuerzo(x.movimientos)
+        incrementar()
+        pw.write(s"Hola voy por aqui ---------------------------------------------> (${coordenadas.x}, ${coordenadas.y}) ${coordenadas.posicion}")
+        s"(${coordenadas.x}, ${coordenadas.y}) ${coordenadas.posicion}"
     }
+    pw.close
     // almacenar este reporte en base de datos
     Reporte(entrega)
   }

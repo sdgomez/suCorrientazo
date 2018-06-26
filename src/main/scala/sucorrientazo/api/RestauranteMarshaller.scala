@@ -16,7 +16,7 @@ trait RestauranteMarshaller {
     }
     val numeroDrones: Int = (jsValue \ "numero_drones").as[Int]
     val z = mapToDirecciones(Almuerzos(direcciones, numeroDrones))
-    println("Posiciones Mapeadas " + z)
+    // println("Posiciones Mapeadas " + z)
     AlmuerzosMapper(z.almuerzos, numeroDrones)
   }
 
