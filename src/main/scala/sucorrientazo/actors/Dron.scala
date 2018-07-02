@@ -1,25 +1,21 @@
 package sucorrientazo.actors
 
 import akka.actor.{ Actor, ActorLogging, Props }
+import com.typesafe.scalalogging.Logger
 import sucorrientazo._
 import sucorrientazo.configuration.Application._
-import java.io._
+
 class Dron extends Actor with ActorLogging {
+
+  val logger = Logger(classOf[Dron])
 
   // TODO uso recursividad pata evitar crear var?
   var numeroAlmuerzosEntregados: Int = 0
   var coordenadasActuales: Coordenadas = Coordenadas(0, 0, Norte)
-  val pw = new PrintWriter(new File("hello.txt"))
 
   override def receive: Receive = {
-    /*
-    * Un dron recibe una lista de direcciones de almuerzos a entregar.
-    * debe haber un actor que maneje a todos los drones, que reciba
-    * una lista de drones o en nuestro caso un AlmuerzosMapper, lo recorra
-    * y vaya creando los actores que requiera y les vaya dando las direcciones.
-     */
     case Direcciones(x) =>
-      println("mensaje recibido")
+      // logger.info("mensaje recibido" + this.self)
       sender() ! entregarAlmuerzos(x)
   }
 
@@ -28,11 +24,14 @@ class Dron extends Actor with ActorLogging {
       x =>
         val coordenadas = entregarUnAlmuerzo(x.movimientos)
         incrementar()
-        pw.write(s"Hola voy por aqui ---------------------------------------------> (${coordenadas.x}, ${coordenadas.y}) ${coordenadas.posicion}")
-        s"(${coordenadas.x}, ${coordenadas.y}) ${coordenadas.posicion}"
+        // logger.info(s" =================================== ALMUERZO ENTREGADO POR EL ACTOR DRON ${this.self} EN LAS SIGUIENTES COORDENADAS =  (${coordenadas.x}, ${coordenadas.y}, ${coordenadas.posicion}) ===================================")
+        s"(ACTOR_DRON = ${this.self.path.name}, ${coordenadas.x}, ${coordenadas.y}, ${coordenadas.posicion})"
     }
-    pw.close
     // almacenar este reporte en base de datos
+
+    logger.info(s"**************************************** REPORTE = ${Reporte(entrega)} *******************************************")
+    logger.info("*******************************************************************************************************************")
+    logger.info(" ")
     Reporte(entrega)
   }
 

@@ -1,0 +1,32 @@
+<configuration>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{HH:mm:ss} %-5level %logger{0} {%class %method} - SUCORRIENTAZO - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="file" class="ch.qos.logback.core.FileAppender">
+        <file>${log-file:-gestor_documentos.log}</file>
+        <encoder>
+            <pattern>%date{HH:mm:ss} %-5level %logger{0} {%class %method} - SUCORRIENTAZO - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="akka" level="DEBUG"/>
+    <logger name="org.eclipse" level="DEBUG"/>
+    <logger name="org.apache.jcp" level="DEBUG"/>
+    <logger name="org.apache.xml" level="DEBUG"/>
+    <logger name="org.apache.cxf" level="DEBUG"/>
+    <logger name="org.eclipse.jetty" level="DEBUG"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
+    </root>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

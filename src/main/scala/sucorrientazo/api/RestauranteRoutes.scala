@@ -1,16 +1,18 @@
 package sucorrientazo.api
 
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.{ ActorRef, ActorSystem }
 import akka.event.Logging
-import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
-import akka.http.scaladsl.server.Directives.{pathPrefix, _}
+import akka.http.scaladsl.model.{ HttpEntity, HttpResponse, StatusCodes }
+import akka.http.scaladsl.server.Directives.{ pathPrefix, _ }
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.get
-import akka.pattern.{CircuitBreaker, ask}
+import akka.pattern.{ CircuitBreaker, ask }
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import play.api.libs.json.{JsObject, Json}
+import com.typesafe.scalalogging.Logger
+import play.api.libs.json.{ JsObject, Json }
 import sucorrientazo.AlmuerzosMapper
+import sucorrientazo.actors.Entrega.EntregarListado
 import sucorrientazo.actors.Service.ObtenerDirecciones
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -23,6 +25,7 @@ trait RestauranteRoutes extends RestauranteMarshaller {
   def entregaActor: ActorRef
   def materializer: ActorMaterializer
   lazy val log = Logging(actorSys, classOf[RestauranteRoutes])
+  val logger = Logger(classOf[RestauranteRoutes])
   implicit lazy val timeout = Timeout(5.seconds)
   // http://localhost:8080/entregar_almuerzos
   lazy val restauranteRoutes: Route = pathPrefix("entregar_almuerzos") {
@@ -57,38 +60,34 @@ trait RestauranteRoutes extends RestauranteMarshaller {
 
       val askFuture: Future[HttpResponse] = breaker.withCircuitBreaker(response)
 
-      val fAlmuerzos: Future[AlmuerzosMapper] = askFuture.map {
+      val fAlmuerzos: Future[String] = askFuture.map {
         httpResponse =>
-          // println("este es el JSON" + httpResponse.entity.toString)
           val entity = httpResponse.entity.asInstanceOf[HttpEntity.Strict]
           val entidad = entity.data.utf8String
           val json: JsObject = Json.parse(entidad).as[JsObject]
-          /*println("este es mi json en string ====================> " +
-            entity.data.utf8String) */
 
           //json.as[Almuerzos]
-          transformarJson(json)
-
-        // necesito un id para cada dron y con ese se crea el actor del mismo
+          val almuerzoMapper: AlmuerzosMapper = transformarJson(json)
+          entregaActor ! EntregarListado(almuerzoMapper)
+          "Se ha iniciado el proceso, por favor consulte el log"
       }
 
-      /* val z = fAlmuerzos.map { x =>
-        val y: Future[Reporte] = (entregaActor ? EntregarListado(x)).mapTo[Future[Reporte]].flatten
-        y.map {
-          m =>
-            println("resultado del futuro ===============>" + m)
-        }
-        /*println(s"ha tenido exito $x.entity con " +
-        s"el random /* random */") */
+      /*fAlmuerzos.map {
+        m =>
+          println("resultado del futuro ===============>" + m)
       }.recover({
         case t => "error: " + println(t.toString)
-      })*/
+      }) */
       //})
 
-      onSuccess(fAlmuerzos) { extraction =>
-        complete("" + extraction)
+      // entregaActor ! "prueba"
+      //val respuesta: Future[String] = (entregaActor ? "prueba").mapTo[String]
+
+      onSuccess(fAlmuerzos) { performed =>
+        complete((StatusCodes.Created, "Esta es la respuesta ===============> " + performed))
       }
-      /*Thread.sleep(90000)
+
+      /*Thread.sleep(50000)
       complete("ok")*/
 
     }
