@@ -30,8 +30,6 @@ class Dron extends Actor with ActorLogging {
     // almacenar este reporte en base de datos
 
     logger.info(s"**************************************** REPORTE = ${Reporte(entrega)} *******************************************")
-    logger.info("*******************************************************************************************************************")
-    logger.info(" ")
     Reporte(entrega)
   }
 
