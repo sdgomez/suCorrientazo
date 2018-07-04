@@ -4,7 +4,9 @@ import akka.actor.{ Actor, ActorLogging, ActorRef, OneForOneStrategy, Props, Sup
 import akka.pattern.{ Backoff, BackoffSupervisor }
 import com.typesafe.scalalogging.Logger
 import sucorrientazo.{ AlmuerzosMapper, Direcciones }
+
 import scala.concurrent.duration._
+import scala.util.Random
 
 class Entrega extends Actor with ActorLogging {
   import Entrega._
@@ -15,12 +17,23 @@ class Entrega extends Actor with ActorLogging {
   override def receive: Receive = {
     case EntregarListado(almuerzosMapper) =>
       logger.debug("mensaje entregado al actor entrega")
+      val dronesDisponibles: List[ActorRef] = crearActores(almuerzosMapper.numero_drones)
+      val posicionDron: Int = Random.nextInt(dronesDisponibles.length)
+
       almuerzosMapper.almuerzos.map {
         almuerzos =>
-          val dron: ActorRef = supervise(Dron.props, s"dron-${i}", s"supervisor-${i}")
+          //val dron: ActorRef = supervise(Dron.props, s"dron-${i}", s"supervisor-${i}")
+          val dron: ActorRef = dronesDisponibles(posicionDron)
           dron ! Direcciones(almuerzos.direcciones)
-          i = i + 1
+        // i = i + 1
       }
+  }
+
+  def crearActores(numeroActores: Int): List[ActorRef] = {
+    val x = for { a <- 1 to numeroActores } yield {
+      supervise(Dron.props, s"dron-${a}", s"supervisor-${a}")
+    }
+    x.toList
   }
 
   def supervise(childProps: Props, name: String, supervisorName: String): ActorRef = {
