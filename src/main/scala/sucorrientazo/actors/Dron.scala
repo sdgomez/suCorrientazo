@@ -5,9 +5,20 @@ import com.typesafe.scalalogging.Logger
 import sucorrientazo._
 import sucorrientazo.configuration.Application._
 
+import scala.util.Random
+
 class Dron extends Actor with ActorLogging {
 
   val logger = Logger(classOf[Dron])
+  /*override def preStart(): Unit = logger.debug(s"${this.self.path.name} started")
+  override def postStop(): Unit = logger.debug(s"${this.self.path.name} stopped")*/
+
+  override def preStart(): Unit = println(s"supervised actor ${this.self.path.name} started")
+  override def postStop(): Unit = println(s"supervised actor ${this.self.path.name} stopped")
+  override def preRestart(reason: Throwable, message: Option[Any]): Unit = println(s"Se va reiniciar el actor ${this.self.path.name}")
+  override def postRestart(reason: Throwable): Unit = println(s"El actor supervisado ha sido reiniciado ${this.self.path.name}")
+
+  override def aroundPostRestart(reason: Throwable): Unit = logger.debug(s"${this.self.path.name} re-started")
 
   // TODO uso recursividad pata evitar crear var?
   var numeroAlmuerzosEntregados: Int = 0
@@ -15,20 +26,23 @@ class Dron extends Actor with ActorLogging {
 
   override def receive: Receive = {
     case Direcciones(x) =>
-      // logger.info("mensaje recibido" + this.self)
-      sender() ! entregarAlmuerzos(x)
+      fallar()
+      entregarAlmuerzos(x)
   }
+
+  private def fallar() =
+    if (Random.nextInt(3) == 2) {
+      //new Exception(s"Actor ${this.self.path.name} falla.")
+      throw new NullPointerException
+    }
 
   def entregarAlmuerzos(direcciones: List[AlmuerzoMapper]): Reporte = {
     val entrega: List[String] = direcciones.map {
       x =>
         val coordenadas = entregarUnAlmuerzo(x.movimientos)
         incrementar()
-        // logger.info(s" =================================== ALMUERZO ENTREGADO POR EL ACTOR DRON ${this.self} EN LAS SIGUIENTES COORDENADAS =  (${coordenadas.x}, ${coordenadas.y}, ${coordenadas.posicion}) ===================================")
         s"(ACTOR_DRON = ${this.self.path.name}, ${coordenadas.x}, ${coordenadas.y}, ${coordenadas.posicion})"
     }
-    // almacenar este reporte en base de datos
-
     logger.info(s"**************************************** REPORTE = ${Reporte(entrega)} *******************************************")
     Reporte(entrega)
   }

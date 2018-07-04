@@ -15,10 +15,6 @@
 
     <logger name="akka" level="DEBUG"/>
     <logger name="org.eclipse" level="DEBUG"/>
-    <logger name="org.apache.jcp" level="DEBUG"/>
-    <logger name="org.apache.xml" level="DEBUG"/>
-    <logger name="org.apache.cxf" level="DEBUG"/>
-    <logger name="org.eclipse.jetty" level="DEBUG"/>
 
     <root level="DEBUG">
         <appender-ref ref="console"/>
