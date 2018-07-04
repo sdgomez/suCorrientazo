@@ -1,6 +1,6 @@
 package sucorrientazo.actors
 
-import akka.actor.{ Actor, ActorLogging, ActorRef, OneForOneStrategy, Props, SupervisorStrategy }
+import akka.actor.{ Actor, ActorLogging, ActorRef, ActorSelection, OneForOneStrategy, Props, SupervisorStrategy }
 import akka.pattern.{ Backoff, BackoffSupervisor }
 import com.typesafe.scalalogging.Logger
 import sucorrientazo.{ AlmuerzosMapper, Direcciones }
@@ -17,26 +17,25 @@ class Entrega extends Actor with ActorLogging {
   override def receive: Receive = {
     case EntregarListado(almuerzosMapper) =>
       logger.debug("mensaje entregado al actor entrega")
-      val dronesDisponibles: List[ActorRef] = crearActores(almuerzosMapper.numero_drones)
-      val posicionDron: Int = Random.nextInt(dronesDisponibles.length)
-
+      val dronesDisponibles: List[ActorSelection] = crearActores(almuerzosMapper.numero_drones)
       almuerzosMapper.almuerzos.map {
         almuerzos =>
           //val dron: ActorRef = supervise(Dron.props, s"dron-${i}", s"supervisor-${i}")
-          val dron: ActorRef = dronesDisponibles(posicionDron)
+          val posicionDron: Int = Random.nextInt(dronesDisponibles.length)
+          val dron: ActorSelection = dronesDisponibles(posicionDron)
           dron ! Direcciones(almuerzos.direcciones)
         // i = i + 1
       }
   }
 
-  def crearActores(numeroActores: Int): List[ActorRef] = {
+  def crearActores(numeroActores: Int): List[ActorSelection] = {
     val x = for { a <- 1 to numeroActores } yield {
       supervise(Dron.props, s"dron-${a}", s"supervisor-${a}")
     }
     x.toList
   }
 
-  def supervise(childProps: Props, name: String, supervisorName: String): ActorRef = {
+  def supervise(childProps: Props, name: String, supervisorName: String): ActorSelection = {
     val supervisor = BackoffSupervisor.props(
       Backoff.onStop(
         childProps,
@@ -54,8 +53,17 @@ class Entrega extends Actor with ActorLogging {
         }
       )
     )
+    val actorSupervisor: Option[ActorRef] = context.child(supervisorName)
+    if (actorSupervisor.isDefined) {
+      context.actorSelection(s"akka://almuerzos/user/entregaActor/${supervisorName}")
+    } else {
+      val nuevoActorSupervisor: ActorRef = context.actorOf(supervisor, supervisorName)
+      context.actorSelection(nuevoActorSupervisor.path)
+    }
 
-    context.actorOf(supervisor, supervisorName)
+    /*val m = context.actorOf(supervisor, supervisorName)
+    logger.error(s"path del actor = ${m.path}")
+    m*/
   }
 
 }
