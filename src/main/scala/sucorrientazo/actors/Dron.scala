@@ -36,15 +36,15 @@ class Dron extends Actor with ActorLogging {
       throw new NullPointerException
     }
 
-  def entregarAlmuerzos(direcciones: List[AlmuerzoMapper]): Reporte = {
+  def entregarAlmuerzos(direcciones: List[AlmuerzoMapper]) = {
     val entrega: List[String] = direcciones.map {
       x =>
         val coordenadas = entregarUnAlmuerzo(x.movimientos)
         incrementar()
         s"(ACTOR_DRON = ${this.self.path.name}, ${coordenadas.x}, ${coordenadas.y}, ${coordenadas.posicion})"
     }
-    logger.info(s"**************************************** REPORTE = ${Reporte(entrega)} *******************************************")
-    Reporte(entrega)
+    logger.info(s"**************************************** " +
+      s"REPORTE = ${Reporte(entrega)} *******************************************")
   }
 
   def entregarUnAlmuerzo(direccion: List[Movimiento]): Coordenadas = {
