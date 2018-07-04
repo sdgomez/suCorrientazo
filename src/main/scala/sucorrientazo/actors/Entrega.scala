@@ -12,8 +12,6 @@ class Entrega extends Actor with ActorLogging {
   import Entrega._
   val logger = Logger(classOf[Entrega])
 
-  var i = 0
-
   override def receive: Receive = {
     case EntregarListado(almuerzosMapper) =>
       logger.debug("mensaje entregado al actor entrega")
@@ -24,15 +22,13 @@ class Entrega extends Actor with ActorLogging {
           val posicionDron: Int = Random.nextInt(dronesDisponibles.length)
           val dron: ActorSelection = dronesDisponibles(posicionDron)
           dron ! Direcciones(almuerzos.direcciones)
-        // i = i + 1
       }
   }
 
   def crearActores(numeroActores: Int): List[ActorSelection] = {
-    val x = for { a <- 1 to numeroActores } yield {
+    (for { a <- 1 to numeroActores } yield {
       supervise(Dron.props, s"dron-${a}", s"supervisor-${a}")
-    }
-    x.toList
+    }).toList
   }
 
   def supervise(childProps: Props, name: String, supervisorName: String): ActorSelection = {
@@ -60,10 +56,6 @@ class Entrega extends Actor with ActorLogging {
       val nuevoActorSupervisor: ActorRef = context.actorOf(supervisor, supervisorName)
       context.actorSelection(nuevoActorSupervisor.path)
     }
-
-    /*val m = context.actorOf(supervisor, supervisorName)
-    logger.error(s"path del actor = ${m.path}")
-    m*/
   }
 
 }
