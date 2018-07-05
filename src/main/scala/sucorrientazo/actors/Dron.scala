@@ -55,7 +55,7 @@ class Dron extends Actor with ActorLogging {
       case GirarDerecha =>
         girarAlaDerecha(coordenadasActuales.posicion)
       case _ =>
-        girarDerecha(coordenadasActuales.posicion)
+        girarIzquierda(coordenadasActuales.posicion)
     }.last
     resetearValores()
     nuevaCoordenada
@@ -97,7 +97,7 @@ class Dron extends Actor with ActorLogging {
     }
   }
 
-  def girarDerecha(posicion: Posicion): Coordenadas = {
+  def girarIzquierda(posicion: Posicion): Coordenadas = {
     posicion match {
       case Norte =>
         actualizarCoordenadas(Coordenadas(coordenadasActuales.x, coordenadasActuales.y, Oeste))
