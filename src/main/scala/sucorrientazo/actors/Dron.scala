@@ -30,16 +30,16 @@ class Dron extends Actor with ActorLogging {
   def entregarAlmuerzos(direcciones: List[AlmuerzoMapper]) = {
     val entrega: List[String] = direcciones.map {
       x =>
-        val coordenadas = entregarUnAlmuerzo(x.movimientos)
-        incrementar()
-        s"(ACTOR_DRON = ${this.self.path.name}, ${coordenadas.x}, ${coordenadas.y}, ${coordenadas.posicion})"
+        entregarUnAlmuerzo(x.movimientos)
+        incrementar
+        s"(ACTOR_DRON = ${this.self.path.name}, ${coordenadasActuales.x}, ${coordenadasActuales.y}, ${coordenadasActuales.posicion})"
     }
     logger.info(s"**************************************** " +
       s"REPORTE = ${Reporte(entrega)} *******************************************")
   }
 
-  def entregarUnAlmuerzo(direccion: List[Movimiento]): Coordenadas = {
-    val nuevaCoordenada: Coordenadas = direccion.map {
+  def entregarUnAlmuerzo(direccion: List[Movimiento]): Unit = {
+    direccion.map {
       case Avanzar =>
         avanzar(coordenadasActuales.posicion)
       case GirarDerecha =>
@@ -48,65 +48,49 @@ class Dron extends Actor with ActorLogging {
         girarDerecha(coordenadasActuales.posicion)
     }.last
     resetearValores()
-    nuevaCoordenada
   }
 
   def avanzar(posicion: Posicion): Coordenadas = {
     posicion match {
-      case Norte => actualizarCoordenadas(
-        Coordenadas(coordenadasActuales.x, coordenadasActuales.y + 1, coordenadasActuales.posicion)
-      )
-      case Sur => actualizarCoordenadas(
-        Coordenadas(coordenadasActuales.x, coordenadasActuales.y - 1, coordenadasActuales.posicion)
-      )
-      case Oeste => actualizarCoordenadas(
-        Coordenadas(coordenadasActuales.x - 1, coordenadasActuales.y, coordenadasActuales.posicion)
-      )
-      case _ => actualizarCoordenadas(
-        Coordenadas(coordenadasActuales.x + 1, coordenadasActuales.y, coordenadasActuales.posicion)
-      )
+      case Norte =>
+        coordenadasActuales.copy(y = coordenadasActuales.y + 1)
+      case Sur =>
+        coordenadasActuales.copy(y = coordenadasActuales.y - 1)
+      case Oeste =>
+        coordenadasActuales.copy(x = coordenadasActuales.x - 1)
+      case _ =>
+        coordenadasActuales.copy(x = coordenadasActuales.x + 1)
     }
   }
 
   def girarAlaDerecha(posicion: Posicion): Coordenadas = {
     posicion match {
       case Norte =>
-        actualizarCoordenadas(
-          Coordenadas(coordenadasActuales.x, coordenadasActuales.y, Este)
-        )
-      case Sur => actualizarCoordenadas(
-        Coordenadas(coordenadasActuales.x, coordenadasActuales.y, Oeste)
-      )
-      case Oeste => actualizarCoordenadas(
-        Coordenadas(coordenadasActuales.x, coordenadasActuales.y, Norte)
-      )
+        coordenadasActuales.copy(posicion = Este)
+      case Sur =>
+        coordenadasActuales.copy(posicion = Oeste)
+      case Oeste =>
+        coordenadasActuales.copy(posicion = Norte)
       case _ =>
-        actualizarCoordenadas(
-          Coordenadas(coordenadasActuales.x, coordenadasActuales.y, Sur)
-        )
+        coordenadasActuales.copy(posicion = Sur)
     }
   }
 
   def girarDerecha(posicion: Posicion): Coordenadas = {
     posicion match {
       case Norte =>
-        actualizarCoordenadas(Coordenadas(coordenadasActuales.x, coordenadasActuales.y, Oeste))
+        coordenadasActuales.copy(posicion = Oeste)
       case Sur =>
-        actualizarCoordenadas(Coordenadas(coordenadasActuales.x, coordenadasActuales.y, Este))
+        coordenadasActuales.copy(posicion = Este)
       case Oeste =>
-        actualizarCoordenadas(Coordenadas(coordenadasActuales.x, coordenadasActuales.y, Sur))
+        coordenadasActuales.copy(posicion = Sur)
       case _ =>
-        actualizarCoordenadas(Coordenadas(coordenadasActuales.x, coordenadasActuales.y, Norte))
+        coordenadasActuales.copy(posicion = Norte)
     }
   }
 
   def incrementar(): Unit = {
     numeroAlmuerzosEntregados = numeroAlmuerzosEntregados + 1
-  }
-
-  def actualizarCoordenadas(coordenadas: Coordenadas): Coordenadas = {
-    coordenadasActuales = coordenadas
-    coordenadasActuales
   }
 
   def resetearValores(): Unit = {

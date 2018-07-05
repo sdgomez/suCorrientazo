@@ -43,7 +43,6 @@ class Entrega extends Actor with ActorLogging {
           case ex: Exception =>
             log.error(ex, s"el actor  ${name.toUpperCase} esta siendo atendido")
             SupervisorStrategy.restart
-          //context.child(name) ! Start
           case _ => SupervisorStrategy.escalate
         }
       )
