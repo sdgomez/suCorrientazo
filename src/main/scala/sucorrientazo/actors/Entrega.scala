@@ -18,7 +18,6 @@ class Entrega extends Actor with ActorLogging {
       val dronesDisponibles: List[ActorSelection] = crearActores(almuerzosMapper.numero_drones)
       almuerzosMapper.almuerzos.map {
         almuerzos =>
-          //val dron: ActorRef = supervise(Dron.props, s"dron-${i}", s"supervisor-${i}")
           val posicionDron: Int = Random.nextInt(dronesDisponibles.length)
           val dron: ActorSelection = dronesDisponibles(posicionDron)
           dron ! Direcciones(almuerzos.direcciones)

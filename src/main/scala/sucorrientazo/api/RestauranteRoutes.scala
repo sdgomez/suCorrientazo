@@ -45,19 +45,6 @@ trait RestauranteRoutes extends RestauranteMarshaller {
           onClose(println("circuit breaker closed!")).
           onHalfOpen(println("circuit breaker half-open"))
 
-      /*(1 to 100).map(x => {
-        Thread.sleep(50)
-        val random = Random.nextInt(3)
-        println("random = " + random)
-        val fallaAveces: Future[HttpResponse] = if (random == 2) {
-          response
-          // convertir este json a una lista de direcciones de almuerzos
-          // llamar al actor que reparte los almuerzos
-          // almacenar en base de datos los almuerzos entregados
-        } else {
-          Future.failed(new Exception("Falla aveces"))
-        } */
-
       val askFuture: Future[HttpResponse] = breaker.withCircuitBreaker(response)
 
       val fAlmuerzos: Future[String] = askFuture.map {
@@ -65,31 +52,14 @@ trait RestauranteRoutes extends RestauranteMarshaller {
           val entity = httpResponse.entity.asInstanceOf[HttpEntity.Strict]
           val entidad = entity.data.utf8String
           val json: JsObject = Json.parse(entidad).as[JsObject]
-
-          //json.as[Almuerzos]
           val almuerzoMapper: AlmuerzosMapper = transformarJson(json)
           entregaActor ! EntregarListado(almuerzoMapper)
           "Se ha iniciado el proceso, por favor consulte el log"
       }
 
-      /*fAlmuerzos.map {
-        m =>
-          println("resultado del futuro ===============>" + m)
-      }.recover({
-        case t => "error: " + println(t.toString)
-      }) */
-      //})
-
-      // entregaActor ! "prueba"
-      //val respuesta: Future[String] = (entregaActor ? "prueba").mapTo[String]
-
       onSuccess(fAlmuerzos) { performed =>
         complete((StatusCodes.Created, "Esta es la respuesta ===============> " + performed))
       }
-
-      /*Thread.sleep(50000)
-      complete("ok")*/
-
     }
   }
 

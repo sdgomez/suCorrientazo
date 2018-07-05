@@ -11,7 +11,6 @@ import sucorrientazo.api.RestauranteRoutes
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-//#main-class
 object QuickstartServer extends App with RestauranteRoutes {
 
   implicit val actorSys: ActorSystem = ActorSystem("almuerzos")
@@ -19,16 +18,9 @@ object QuickstartServer extends App with RestauranteRoutes {
   val actorService: ActorRef = actorSys.actorOf(Service.props, "userRegistryActor")
   val entregaActor: ActorRef = actorSys.actorOf(Entrega.props, "entregaActor")
   lazy val routes: Route = restauranteRoutes
-  //#main-class
 
-  //#http-server
   Http().bindAndHandle(routes, "localhost", 8080)
-
   println(s"Server online at http://localhost:8080/")
-
   Await.result(actorSys.whenTerminated, Duration.Inf)
-  //#http-server
-  //#main-class
 }
-//#main-class
-//#quick-start-server
+

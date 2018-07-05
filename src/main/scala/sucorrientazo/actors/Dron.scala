@@ -10,8 +10,6 @@ import scala.util.Random
 class Dron extends Actor with ActorLogging {
 
   val logger = Logger(classOf[Dron])
-  /*override def preStart(): Unit = logger.debug(s"${this.self.path.name} started")
-  override def postStop(): Unit = logger.debug(s"${this.self.path.name} stopped")*/
 
   override def preStart(): Unit = println(s"supervised actor ${this.self.path.name} started")
   override def postStop(): Unit = println(s"supervised actor ${this.self.path.name} stopped")
@@ -26,15 +24,8 @@ class Dron extends Actor with ActorLogging {
 
   override def receive: Receive = {
     case Direcciones(x) =>
-      fallar()
       entregarAlmuerzos(x)
   }
-
-  private def fallar() =
-    if (Random.nextInt(3) == 2) {
-      //new Exception(s"Actor ${this.self.path.name} falla.")
-      throw new NullPointerException
-    }
 
   def entregarAlmuerzos(direcciones: List[AlmuerzoMapper]) = {
     val entrega: List[String] = direcciones.map {
