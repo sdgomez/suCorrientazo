@@ -1,23 +1,25 @@
 package sucorrientazo.api
 
+import akka.http.scaladsl.model.{ HttpEntity, HttpResponse }
 import play.api.libs.json._
 import sucorrientazo._
 
-trait RestauranteMarshaller {
+trait Transformacion {
+
+  def obtenerListadoParaEntrega(response: HttpResponse): AlmuerzosMapper = {
+    val entity = response.entity.asInstanceOf[HttpEntity.Strict] // TODO hacer la conversion de una mejor forma
+    transformarJson(Json.parse(entity.data.utf8String).as[JsObject])
+  }
 
   def transformarJson(jsValue: JsObject): AlmuerzosMapper = {
 
     val jsArray: JsArray = (jsValue \ "almuerzos").as[JsArray]
     val direcciones = jsArray.value.toList.map {
       x =>
-        val m: JsObject = x.as[JsObject]
-        val o = (m \ "direcciones").as[JsArray].value.toList.map(_.toString)
-        o
+        (x.as[JsObject] \ "direcciones").as[JsArray].value.toList.map(_.toString)
     }
     val numeroDrones: Int = (jsValue \ "numero_drones").as[Int]
-    val z = mapToDirecciones(Almuerzos(direcciones, numeroDrones))
-    // println("Posiciones Mapeadas " + z)
-    AlmuerzosMapper(z.almuerzos, numeroDrones)
+    AlmuerzosMapper(mapToDirecciones(Almuerzos(direcciones, numeroDrones)).almuerzos, numeroDrones)
   }
 
   def mapToDirecciones(almuerzos: Almuerzos): AlmuerzosMapper = {

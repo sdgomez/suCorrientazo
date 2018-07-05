@@ -3,9 +3,9 @@ package sucorrientazo.actors
 import akka.actor.{ Actor, ActorLogging, ActorRef, ActorSelection, OneForOneStrategy, Props, SupervisorStrategy }
 import akka.pattern.{ Backoff, BackoffSupervisor }
 import com.typesafe.scalalogging.Logger
+import sucorrientazo.configuration.Application.{ maxBackoff, minBackoff, randomFactor }
 import sucorrientazo.{ AlmuerzosMapper, Direcciones }
 
-import scala.concurrent.duration._
 import scala.util.Random
 
 class Entrega extends Actor with ActorLogging {
@@ -35,9 +35,9 @@ class Entrega extends Actor with ActorLogging {
       Backoff.onStop(
         childProps,
         childName = name,
-        minBackoff = 1.seconds,
-        maxBackoff = 3.seconds,
-        randomFactor = 0.2 // adds 20% "noise" to vary the intervals slightly
+        minBackoff = minBackoff,
+        maxBackoff = maxBackoff,
+        randomFactor = randomFactor // adds 20% "noise" to vary the intervals slightly
       ).withSupervisorStrategy(
         OneForOneStrategy() {
           case ex: Exception =>

@@ -1,4 +1,4 @@
-package com.example
+package run
 
 //#quick-start-server
 import akka.actor.{ ActorRef, ActorSystem }
