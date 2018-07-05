@@ -14,7 +14,7 @@ class Entrega extends Actor with ActorLogging {
 
   override def receive: Receive = {
     case EntregarListado(almuerzosMapper) =>
-      logger.debug("mensaje entregado al actor entrega")
+      println(s"lista de almuerzo mapper -> ${almuerzosMapper}")
       val dronesDisponibles: List[ActorSelection] = crearActores(almuerzosMapper.numero_drones)
       almuerzosMapper.almuerzos.map {
         almuerzos =>

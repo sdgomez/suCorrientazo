@@ -26,7 +26,10 @@ class Dron extends Actor with ActorLogging {
 
   override def receive: Receive = {
     case Direcciones(x) =>
+      irPosicionInicial
+      println(s"direcciones recibidas = ${x} por el dron ${this.self.path.name}")
       fallar()
+      println(s"coordenadas actuales =  ${coordenadasActuales} del dron ${this.self.path.name}")
       entregarAlmuerzos(x)
   }
 
@@ -124,6 +127,11 @@ class Dron extends Actor with ActorLogging {
       numeroAlmuerzosEntregados = 0
     }
   }
+  def irPosicionInicial(): Unit = {
+    coordenadasActuales = Coordenadas(0, 0, Norte)
+    numeroAlmuerzosEntregados = 0
+  }
+
 }
 
 object Dron {
